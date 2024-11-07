@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\LoginController;
@@ -8,11 +10,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-// Public routes (accessible by everyone)
-Route::get('/', [PageController::class, 'home'])->name('home');
-Route::get('/service', [PageController::class, 'service'])->name('service');Route::get('/work', [PageController::class, 'work'])->name('work');
-Route::get('/contact', [PageController::class, 'contact'])->name('contact');
-Route::get('/about', [PageController::class, 'about'])->name('about');
 
 // Authentication routes (only logged-in users)
 Route::middleware('auth')->group(function () {
@@ -32,13 +29,34 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
+    //home page
+    Route::get('/home/create', [HomeController::class, 'create'])->name('home.create');
+    Route::post('/home', [HomeController::class, 'store'])->name('home.store');
+    Route::get('/home/{id}/edit', [HomeController::class, 'edit'])->name('home.edit');
+    Route::put('/home/{id}', [HomeController::class, 'update'])->name('home.update');
+    Route::delete('/home/{id}', [HomeController::class, 'destroy'])->name('home.delete');
+
+    //Service page
     Route::get('/service/create', [ServiceController::class, 'create'])->name('service.create');
     Route::post('/service', [ServiceController::class, 'store'])->name('service.store');
     Route::get('/service/{id}/edit', [ServiceController::class, 'edit'])->name('service.edit');
     Route::put('/service/{id}', [ServiceController::class, 'update'])->name('service.update');
     Route::delete('/service/{id}', [ServiceController::class, 'destroy'])->name('service.delete');
+
+    //About page
+    Route::get('/about/create', [AboutController::class, 'create'])->name('about.create');
+    Route::post('/about', [AboutController::class, 'store'])->name('about.store');
+    Route::get('/about/{id}/edit', [AboutController::class, 'edit'])->name('about.edit');
+    Route::put('/about/{id}', [AboutController::class, 'update'])->name('about.update');
+    Route::delete('/about/{id}', [AboutController::class, 'destroy'])->name('about.delete');
+
 });
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/service', [ServiceController::class, 'index'])->name('service');
+Route::get('/about', [AboutController::class, 'index'])->name('about');
+Route::get('/work', [AboutController::class, 'index'])->name('work');
+Route::get('/contact', [AboutController::class, 'index'])->name('contact');
+
 
 
 // Authentication routes setup (from Laravel Breeze or similar package)

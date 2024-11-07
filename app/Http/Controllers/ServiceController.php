@@ -8,70 +8,81 @@ use Illuminate\Http\Request;
 class ServiceController extends Controller
 {
     public function index()
-    {
-        // Fetch all services from the database
-        $services = Service::all();
+{
+    $services = Service::all();
+    return view('pages.service.service', compact('services')); // Ensure this path matches
+}
 
-        // Pass the $services variable to the view
-        return view('pages.service', compact('services'));
-    }
+    
 
     public function create()
     {
-        return view('service.create');
+        return view('pages.create'); // Renamed view to pages.service-create
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'image_path' => 'required|image',
-            'temperature_range' => 'nullable|string|max:50',
-            'description' => 'required|string',
+            'title.*' => 'nullable|string|max:255',
+            'description.*' => 'nullable|string',
+            'temperature_range.*' => 'nullable|string',
+            'image_path.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $path = $request->file('image_path')->store('images', 'public');
-        
-        Service::create([
-            'title' => $request->title,
-            'image_path' => $path,
-            'temperature_range' => $request->temperature_range,
-            'description' => $request->description,
-        ]);
+        for ($i = 0; $i < count($request->title); $i++) {
+            if ($request->title[$i] || $request->description[$i]) {
+                $service = new Service;
+                $service->title = $request->title[$i];
+                $service->description = $request->description[$i];
+                $service->temperature_range = $request->temperature_range[$i] ?? null;
 
-        return redirect()->route('service');
+                if (isset($request->image_path[$i])) {
+                    $imagePath = $request->image_path[$i]->store('images', 'public');
+                    $service->image_path = $imagePath;
+                }
+
+                $service->save();
+            }
+        }
+
+        return redirect()->route('service')->with('success', 'Service items created successfully.');
     }
 
     public function edit($id)
     {
         $service = Service::findOrFail($id);
-        return view('service.edit', compact('service'));
+        return view('pages.edit', compact('service')); // Renamed view to pages.service-edit
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'image_path' => 'nullable|image',
-            'temperature_range' => 'nullable|string|max:50',
-            'description' => 'required|string',
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'temperature_range' => 'nullable|string',
+            'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $service = Service::findOrFail($id);
-        if ($request->hasFile('image_path')) {
-            $service->image_path = $request->file('image_path')->store('images', 'public');
-        }
-        
-        $service->update($request->only('title', 'temperature_range', 'description'));
+        $service->title = $request->title;
+        $service->description = $request->description;
+        $service->temperature_range = $request->temperature_range;
 
-        return redirect()->route('service');
+        if ($request->hasFile('image_path')) {
+            $imagePath = $request->file('image_path')->store('images', 'public');
+            $service->image_path = $imagePath;
+        }
+
+        $service->save();
+
+        return redirect()->route('service')->with('success', 'Service item updated successfully.');
     }
 
     public function destroy($id)
     {
         $service = Service::findOrFail($id);
         $service->delete();
-        
-        return redirect()->route('service');
+
+        return redirect()->route('service')->with('success', 'Service item deleted successfully.');
     }
 }
