@@ -9,6 +9,9 @@ class Page extends Model
 {
     use HasFactory;
 
-    // Define which fields are mass assignable
-    protected $fillable = ['title', 'content'];
+    // Define the table if it's not `pages`
+    protected $table = 'pages';
+
+    // Define fillable fields if necessary
+    protected $fillable = ['title', 'description', 'content', 'color', 'font', 'image_path'];
 }

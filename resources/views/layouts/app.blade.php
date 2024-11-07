@@ -11,6 +11,7 @@
     <script src="{{ asset('js/admin.js') }}"></script>
 </head>
 <body>
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Admin Project</a>
@@ -43,7 +44,7 @@
                     @else
                         @if(auth()->user()->is_admin)
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.panel') }}">Admin</a>
+                                <a class="nav-link" href="{{ route('home') }}">Admin</a>
                             </li>
                         @endif
                         <li class="nav-item">
@@ -57,6 +58,9 @@
             </div>
         </div>
     </nav>
+    
+    
+    <!-- Main Content -->
     <div class="container mt-4">
         @yield('content')
     </div>
