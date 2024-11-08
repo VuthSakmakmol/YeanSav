@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\WorkController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProfileController;
@@ -50,12 +52,25 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::put('/about/{id}', [AboutController::class, 'update'])->name('about.update');
     Route::delete('/about/{id}', [AboutController::class, 'destroy'])->name('about.delete');
 
+
+    //Contact page
+    Route::get('/contact/create', [ContactController::class, 'create'])->name('contact.create');
+    Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+    Route::get('/contact/{id}/edit', [ContactController::class, 'edit'])->name('contact.edit');
+    Route::put('/contact/{id}', [ContactController::class, 'update'])->name('contact.update');
+    Route::delete('/contact/{id}', [ContactController::class, 'destroy'])->name('contact.delete');
+
+
+    //Work page
+
+
 });
+
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/service', [ServiceController::class, 'index'])->name('service');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
-Route::get('/work', [AboutController::class, 'index'])->name('work');
-Route::get('/contact', [AboutController::class, 'index'])->name('contact');
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 
 
 

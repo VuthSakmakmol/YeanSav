@@ -17,7 +17,7 @@ class ServiceController extends Controller
 
     public function create()
     {
-        return view('pages.create'); // Renamed view to pages.service-create
+        return view('pages.service.create'); // Renamed view to pages.service-create
     }
 
     public function store(Request $request)
@@ -51,7 +51,7 @@ class ServiceController extends Controller
     public function edit($id)
     {
         $service = Service::findOrFail($id);
-        return view('pages.edit', compact('service')); // Renamed view to pages.service-edit
+        return view('pages.service.edit', compact('service')); // Renamed view to pages.service-edit
     }
 
     public function update(Request $request, $id)

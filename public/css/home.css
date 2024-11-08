@@ -1,0 +1,37 @@
+/* home.css */
+.home-item {
+    position: relative;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #f7f7f7;
+}
+.home-item img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+}
+.new-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background-color: #00ff00;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 50%;
+    transform: rotate(-20deg);
+    z-index: 10;
+}
+.secondary-image {
+    border: 1px solid #ddd;
+    margin-top: 10px;
+}
+.item-details {
+    text-align: left;
+}
+.item-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-top: 10px;
+}
