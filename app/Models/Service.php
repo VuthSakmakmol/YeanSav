@@ -15,4 +15,9 @@ class Service extends Model
         'temperature_range',
         'description',
     ];
+
+    public function serviceDetails()
+    {
+        return $this->hasMany(ServiceDetail::class);
+    }
 }

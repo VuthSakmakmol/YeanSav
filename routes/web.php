@@ -3,17 +3,23 @@
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\WorkController;
+use App\Http\Controllers\ServiceDetailController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
+// Public routes (accessible without login)
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/service', [ServiceController::class, 'index'])->name('service');
+Route::get('/about', [AboutController::class, 'index'])->name('about');
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 
-// Authentication routes (only logged-in users)
+// Authentication routes setup (from Laravel Breeze or similar package)
+require __DIR__ . '/auth.php';
+
+// Authenticated routes (only accessible to logged-in users)
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -22,7 +28,6 @@ Route::middleware('auth')->group(function () {
         auth()->logout();
         return redirect('/');
     })->name('logout');
-    
 });
 
 // Admin routes (only accessible by admins)
@@ -31,48 +36,51 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
-    //home page
-    Route::get('/home/create', [HomeController::class, 'create'])->name('home.create');
-    Route::post('/home', [HomeController::class, 'store'])->name('home.store');
-    Route::get('/home/{id}/edit', [HomeController::class, 'edit'])->name('home.edit');
-    Route::put('/home/{id}', [HomeController::class, 'update'])->name('home.update');
-    Route::delete('/home/{id}', [HomeController::class, 'destroy'])->name('home.delete');
+    // Home Page CRUD
+    Route::prefix('home')->group(function () {
+        Route::get('create', [HomeController::class, 'create'])->name('home.create');
+        Route::post('/', [HomeController::class, 'store'])->name('home.store');
+        Route::get('{id}/edit', [HomeController::class, 'edit'])->name('home.edit');
+        Route::put('{id}', [HomeController::class, 'update'])->name('home.update');
+        Route::delete('{id}', [HomeController::class, 'destroy'])->name('home.delete');
+    });
 
-    //Service page
-    Route::get('/service/create', [ServiceController::class, 'create'])->name('service.create');
-    Route::post('/service', [ServiceController::class, 'store'])->name('service.store');
-    Route::get('/service/{id}/edit', [ServiceController::class, 'edit'])->name('service.edit');
-    Route::put('/service/{id}', [ServiceController::class, 'update'])->name('service.update');
-    Route::delete('/service/{id}', [ServiceController::class, 'destroy'])->name('service.delete');
+    // Service CRUD
+    Route::prefix('services')->group(function () {
+        Route::get('/', [ServiceController::class, 'index'])->name('services.index'); // List services
+        Route::get('create', [ServiceController::class, 'create'])->name('service.create'); // Show create form
+        Route::post('store', [ServiceController::class, 'store'])->name('service.store'); // Store a new service
+        Route::get('{service}/edit', [ServiceController::class, 'edit'])->name('service.edit'); // Edit form
+        Route::put('{service}', [ServiceController::class, 'update'])->name('services.update'); // Update service
+        Route::delete('{service}', [ServiceController::class, 'destroy'])->name('services.destroy'); // Delete service
+    });
 
-    //About page
-    Route::get('/about/create', [AboutController::class, 'create'])->name('about.create');
-    Route::post('/about', [AboutController::class, 'store'])->name('about.store');
-    Route::get('/about/{id}/edit', [AboutController::class, 'edit'])->name('about.edit');
-    Route::put('/about/{id}', [AboutController::class, 'update'])->name('about.update');
-    Route::delete('/about/{id}', [AboutController::class, 'destroy'])->name('about.delete');
+    // Service Detail CRUD
+    Route::prefix('services/{service}')->group(function () {
+        Route::get('detail/create', [ServiceDetailController::class, 'create'])->name('service.detail.create'); // Show create form for details
+        Route::post('detail', [ServiceDetailController::class, 'store'])->name('service.detail.store'); // Store service detail
+        Route::get('detail/{serviceDetail}/edit', [ServiceDetailController::class, 'edit'])->name('service.detail.edit'); // Edit form for detail
+        Route::put('detail/{serviceDetail}', [ServiceDetailController::class, 'update'])->name('service.detail.update'); // Update service detail
+        Route::delete('detail/{serviceDetail}', [ServiceDetailController::class, 'destroy'])->name('service.detail.destroy'); // Delete service detail
+        Route::get('detail/{serviceDetail}', [ServiceDetailController::class, 'show'])->name('service.detail.show'); // Show single detail
+        Route::get('details', [ServiceDetailController::class, 'showDetail'])->name('service.details.show-all'); // Show all details for a service
+    });
 
+    // About Page CRUD
+    Route::prefix('about')->group(function () {
+        Route::get('create', [AboutController::class, 'create'])->name('about.create');
+        Route::post('/', [AboutController::class, 'store'])->name('about.store');
+        Route::get('{id}/edit', [AboutController::class, 'edit'])->name('about.edit');
+        Route::put('{id}', [AboutController::class, 'update'])->name('about.update');
+        Route::delete('{id}', [AboutController::class, 'destroy'])->name('about.delete');
+    });
 
-    //Contact page
-    Route::get('/contact/create', [ContactController::class, 'create'])->name('contact.create');
-    Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
-    Route::get('/contact/{id}/edit', [ContactController::class, 'edit'])->name('contact.edit');
-    Route::put('/contact/{id}', [ContactController::class, 'update'])->name('contact.update');
-    Route::delete('/contact/{id}', [ContactController::class, 'destroy'])->name('contact.delete');
-
-
-    //Work page
-
-
+    // Contact Page CRUD
+    Route::prefix('contact')->group(function () {
+        Route::get('create', [ContactController::class, 'create'])->name('contact.create');
+        Route::post('/', [ContactController::class, 'store'])->name('contact.store');
+        Route::get('{id}/edit', [ContactController::class, 'edit'])->name('contact.edit');
+        Route::put('{id}', [ContactController::class, 'update'])->name('contact.update');
+        Route::delete('{id}', [ContactController::class, 'destroy'])->name('contact.delete');
+    });
 });
-
-
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/service', [ServiceController::class, 'index'])->name('service');
-Route::get('/about', [AboutController::class, 'index'])->name('about');
-Route::get('/contact', [ContactController::class, 'index'])->name('contact');
-
-
-
-// Authentication routes setup (from Laravel Breeze or similar package)
-require __DIR__.'/auth.php';
