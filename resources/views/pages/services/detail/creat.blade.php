@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container my-5" style="background-color: #f0a500; color: #333; padding: 30px;">
+<div class="container">
     <h1 class="mb-4">Create Service Detail for {{ $service->title }}</h1>
-    
+
     <form action="{{ route('service.detail.store', $service->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
@@ -22,7 +22,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="surface_area" class="form-label">Surface Area (sq. meters)</label>
+            <label for="surface_area" class="form-label">Surface Area (e.g., sq. meters)</label>
             <input type="number" step="0.01" name="surface_area" class="form-control" value="{{ old('surface_area') }}" placeholder="Surface Area">
         </div>
 
@@ -46,7 +46,21 @@
             <input type="file" name="image" class="form-control" accept="image/*">
         </div>
 
-        <button type="submit" class="btn btn-primary mt-4">Save Detail</button>
+        <button type="submit" class="btn btn-primary">Save Detail</button>
     </form>
+
+    @if(session('success'))
+        <div class="alert alert-success mt-3">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger mt-3">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <a href="{{ route('service.details.show-all', $service->id) }}" class="btn btn-secondary mt-3">Back to All Service Details</a>
 </div>
 @endsection

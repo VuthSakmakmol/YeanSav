@@ -16,6 +16,12 @@ Route::get('/service', [ServiceController::class, 'index'])->name('service');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 
+// Public Service Detail routes (accessible without login)
+Route::prefix('services/{service}')->group(function () {
+    Route::get('detail/{serviceDetail}', [ServiceDetailController::class, 'show'])->name('service.detail.show'); // Show single detail
+    Route::get('details', [ServiceDetailController::class, 'showDetail'])->name('service.details.show-all'); // Show all details for a service
+});
+
 // Authentication routes setup (from Laravel Breeze or similar package)
 require __DIR__ . '/auth.php';
 
@@ -55,16 +61,24 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
         Route::delete('{service}', [ServiceController::class, 'destroy'])->name('services.destroy'); // Delete service
     });
 
-    // Service Detail CRUD
+    // // Service Detail CRUD
+    // Route::prefix('services/{service}')->group(function () {
+    //     Route::get('detail/create', [ServiceDetailController::class, 'create'])->name('service.detail.create'); // Show create form for details
+    //     Route::post('detail', [ServiceDetailController::class, 'store'])->name('service.detail.store'); // Store service detail
+    //     Route::get('detail/{serviceDetail}/edit', [ServiceDetailController::class, 'edit'])->name('service.detail.edit'); // Edit form for detail
+    //     Route::put('detail/{serviceDetail}', [ServiceDetailController::class, 'update'])->name('service.detail.update'); // Update service detail
+    //     Route::delete('detail/{serviceDetail}', [ServiceDetailController::class, 'destroy'])->name('service.detail.destroy'); // Delete service detail
+    // });
+    // Admin routes for creating/editing/deleting service details
+Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::prefix('services/{service}')->group(function () {
         Route::get('detail/create', [ServiceDetailController::class, 'create'])->name('service.detail.create'); // Show create form for details
         Route::post('detail', [ServiceDetailController::class, 'store'])->name('service.detail.store'); // Store service detail
         Route::get('detail/{serviceDetail}/edit', [ServiceDetailController::class, 'edit'])->name('service.detail.edit'); // Edit form for detail
         Route::put('detail/{serviceDetail}', [ServiceDetailController::class, 'update'])->name('service.detail.update'); // Update service detail
         Route::delete('detail/{serviceDetail}', [ServiceDetailController::class, 'destroy'])->name('service.detail.destroy'); // Delete service detail
-        Route::get('detail/{serviceDetail}', [ServiceDetailController::class, 'show'])->name('service.detail.show'); // Show single detail
-        Route::get('details', [ServiceDetailController::class, 'showDetail'])->name('service.details.show-all'); // Show all details for a service
     });
+});
 
     // About Page CRUD
     Route::prefix('about')->group(function () {

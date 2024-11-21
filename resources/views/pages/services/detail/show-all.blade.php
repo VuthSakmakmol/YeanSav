@@ -27,7 +27,7 @@
 
                                 @if($detail->image)
                                     <div class="text-center mb-3">
-                                        <img src="{{ asset('storage/' . $detail->image) }}" 
+                                        <img src="{{ asset('storage/images' . $detail->image) }}" 
                                              alt="Service Detail Image" 
                                              class="img-fluid rounded" style="max-height: 200px;">
                                     </div>
