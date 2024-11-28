@@ -1,46 +1,49 @@
 @extends('layouts.app')
+
 @section('content')
 <div class="container text-center my-5">
-    <h1 class="mb-4">WELCOME TO OUR HOME PAGE</h1>
-    <p>Discover more about what we offer</p>
+    <h1 class="mb-4">All Projects</h1>
 
-    <div class="row justify-content-center mt-5">
-        @foreach($homeItems as $item)
-            <div class="col-md-4 mb-5">
-                <div class="home-item">
-                    <span class="new-badge">new</span>
-                    <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->title }}" class="img-fluid main-image mb-3">
-                    <div class="row">
-                        <div class="col-3">
-                            <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->title }}" class="img-fluid secondary-image">
+    @if(auth()->check() && auth()->user()->isAdmin())
+        <div class="mb-3">
+            <a href="{{ route('projects.create') }}" class="btn btn-success">Add New Project</a>
+        </div>
+    @endif
+
+    @if($projects->isEmpty())
+        <p>No projects available.</p>
+    @else
+        <div class="row justify-content-center mt-5">
+            @foreach($projects as $project)
+                <div class="col-md-4 mb-5">
+                    <div class="project-item">
+                        @if($project->image)
+                            <p>Image Path: {{ $project->image }}</p> <!-- Debugging step to see image path -->
+                            <img src="{{ asset('storage/' . $project->image) }}" alt="{{ $project->title }}" class="img-fluid main-image mb-3">
+                        @else
+                            <p>No Image Available</p>
+                        @endif
+                        <div class="item-details">
+                            <h3 class="item-title">{{ $project->title }}</h3>
+                            <p class="text-muted">{{ $project->description }}</p>
+                            <a href="{{ route('projects.show', $project->id) }}" class="btn btn-outline-primary">View Details</a>
                         </div>
+
+                        {{-- Admin Controls --}}
+                        @if(auth()->check() && auth()->user()->isAdmin())
+                            <div class="mt-3">
+                                <a href="{{ route('projects.edit', $project->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this project?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </div>
+                        @endif
                     </div>
-                    <div class="item-details">
-                        <h3 class="item-title">{{ $item->title }}</h3>
-                        <p class="text-muted">{{ $item->temperature_range }}</p>
-                        <p>{{ $item->description }}</p>
-                        <a href="#" class="btn btn-outline-primary">Learn more...</a>
-                    </div>
-                    
-                    {{-- Admin Controls --}}
-                    @if(auth()->check() && auth()->user()->is_admin)
-                        <div class="mt-3">
-                            <a href="{{ route('home.edit', $item->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                            <form action="{{ route('home.delete', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this item?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>                            
-                        </div>
-                    @endif
                 </div>
-            </div>
-        @endforeach
-    </div>
-
-    {{-- Button to Create New Home Item (for Admins) --}}
-    @if(auth()->check() && auth()->user()->is_admin)
-        <a href="{{ route('home.create') }}" class="btn btn-success mt-4">Add New Home Item</a>
+            @endforeach
+        </div>
     @endif
 </div>
 @endsection
