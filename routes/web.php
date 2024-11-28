@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AboutController;
@@ -10,10 +11,10 @@ use Illuminate\Support\Facades\Route;
 // Public routes (accessible without login)
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/project', [ProjectController::class, 'index'])->name('project');
-Route::get('/about', [AboutController::class, 'index'])->name('about');
+Route::get('/projectdetails/{projectDetail}', [ProjectDetailController::class, 'show'])->name('projectsdetails.show');Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 
-// Authentication routes setup (from Laravel Breeze or similar package)
+// Authentication routes (default Laravel Breeze or similar setup)
 require __DIR__ . '/auth.php';
 
 // Authenticated routes (only accessible to logged-in users)
@@ -28,42 +29,35 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin routes (only accessible by admins)
-Route::middleware(['auth', 'isAdmin'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+Route::middleware(['auth', 'isAdmin'])->prefix('admin')->group(function () {
 
     // Home Page CRUD
     Route::prefix('home')->group(function () {
-        Route::get('create', [HomeController::class, 'create'])->name('home.create');
+        Route::get('/create', [HomeController::class, 'create'])->name('home.create');
         Route::post('/', [HomeController::class, 'store'])->name('home.store');
-        Route::get('{id}/edit', [HomeController::class, 'edit'])->name('home.edit');
-        Route::put('{id}', [HomeController::class, 'update'])->name('home.update');
-        Route::delete('{id}', [HomeController::class, 'destroy'])->name('home.delete');
+        Route::get('/{id}/edit', [HomeController::class, 'edit'])->name('home.edit');
+        Route::put('/{id}', [HomeController::class, 'update'])->name('home.update');
+        Route::delete('/{id}', [HomeController::class, 'destroy'])->name('home.destroy');
     });
 
     // Project CRUD
     Route::prefix('projects')->group(function () {
-        Route::get('/', [ProjectController::class, 'index'])->name('projects.index');
+        Route::get('/', [ProjectController::class, 'index'])->name('projects.index'); // Admin-only index
         Route::get('create', [ProjectController::class, 'create'])->name('projects.create');
         Route::post('/', [ProjectController::class, 'store'])->name('projects.store');
-        Route::get('{project}', [ProjectController::class, 'show'])->name('projects.show');
         Route::get('{project}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
         Route::put('{project}', [ProjectController::class, 'update'])->name('projects.update');
         Route::delete('{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
 
-    // Project Detail CRUD
-    Route::prefix('projects/{project}/details')->group(function () {
-        Route::get('/', [ProjectDetailController::class, 'show'])->name('projectsdetails.show');  // Display project details
-        Route::get('create', [ProjectDetailController::class, 'create'])->name('project.details.create'); // Create project details form
-        Route::post('/', [ProjectDetailController::class, 'store'])->name('project.details.store'); // Store project details
-        Route::get('{projectDetail}', [ProjectDetailController::class, 'show'])->name('project.details.show'); // Show specific project detail
-        Route::get('{projectDetail}/edit', [ProjectDetailController::class, 'edit'])->name('project.details.edit'); // Edit project detail form
-        Route::put('{projectDetail}', [ProjectDetailController::class, 'update'])->name('project.details.update'); // Update project detail
-        Route::delete('{projectDetail}', [ProjectDetailController::class, 'destroy'])->name('project.details.destroy'); // Delete project detail
-    });
-       
-
+        // Project Detail CRUD
+        Route::prefix('{project}/details')->group(function () {
+            Route::get('/', [ProjectDetailController::class, 'index'])->name('project.details.index'); // Admin-only project details index
+            Route::get('create', [ProjectDetailController::class, 'create'])->name('project.details.create');
+            Route::post('/', [ProjectDetailController::class, 'store'])->name('project.details.store');
+            Route::get('{projectDetail}/edit', [ProjectDetailController::class, 'edit'])->name('project.details.edit');
+            Route::put('{projectDetail}', [ProjectDetailController::class, 'update'])->name('project.details.update');
+            Route::delete('{projectDetail}', [ProjectDetailController::class, 'destroy'])->name('project.details.destroy');
+        });
     });
 
     // About Page CRUD

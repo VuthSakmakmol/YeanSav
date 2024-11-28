@@ -19,11 +19,16 @@ class ProjectDetailController extends Controller
     // Show project detail
     public function show($projectId)
     {
+        // Find the project or throw a 404
         $project = Project::findOrFail($projectId);
-        $projectDetail = $project->detail; // Assuming you have a `detail` relationship on your Project model
 
+        // Load the related detail or return null if not found
+        $projectDetail = $project->detail;
+
+        // Pass both the project and its detail to the view
         return view('pages.projectsdetails.show', compact('project', 'projectDetail'));
     }
+
 
     // Store new project details
     public function store(Request $request, $projectId)

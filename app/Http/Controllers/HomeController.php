@@ -3,19 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Home; // Ensure Home model exists
+use App\Models\Project ; 
+use App\Models\About;
+use App\Models\Contact;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    // Display the Home page with all items
     public function index()
-    {
-        // Fetch all items for the Home page
-        $homeItems = Home::all();
-        
-        // Pass the $homeItems variable to the view
-        return view('pages.home.home', compact('homeItems')); // Adjusted path
-    }
+{
+    $homeItems = Home::all();
+    $projects = Project::all();
+    $contactItems = Contact::all(); // Fetch all contact items
+    $aboutItems = About::all(); // Fetch all about items
+    
+    return view('pages.home.home', compact('homeItems', 'projects', 'contactItems', 'aboutItems'));
+}
+
+
+    
+
+
 
     // Show the form to create a new item on the Home page
     public function create()
@@ -26,7 +34,7 @@ class HomeController extends Controller
     // Store a newly created item on the Home page
     public function store(Request $request)
 {
-    // Adjust validation for array input fields
+    // Validate the inputs, allowing multiple values for each field
     $request->validate([
         'title.*' => 'nullable|string|max:255',
         'description.*' => 'nullable|string',
@@ -36,16 +44,16 @@ class HomeController extends Controller
 
     // Loop through each set of inputs
     for ($i = 0; $i < count($request->title); $i++) {
-        // Create a new Home item only if title or description is provided
-        if ($request->title[$i] || $request->description[$i]) {
+        // Only create a new Home item if title or description is provided
+        if (!empty($request->title[$i]) || !empty($request->description[$i])) {
             $homeItem = new Home;
             $homeItem->title = $request->title[$i];
             $homeItem->description = $request->description[$i];
             $homeItem->temperature_range = $request->temperature_range[$i] ?? null;
 
-            // Handle image upload if provided
-            if (isset($request->image_path[$i])) {
-                $imagePath = $request->image_path[$i]->store('images', 'public');
+            // Handle the image upload if provided
+            if ($request->hasFile("image_path.$i")) {
+                $imagePath = $request->file("image_path.$i")->store('images', 'public');
                 $homeItem->image_path = $imagePath;
             }
 
@@ -53,9 +61,9 @@ class HomeController extends Controller
         }
     }
 
-    // Redirect back to the Home page
     return redirect()->route('home')->with('success', 'Home items created successfully.');
 }
+
 
 
     // Show the form to edit an existing item on the Home page
