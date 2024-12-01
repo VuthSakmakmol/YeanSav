@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\ProjectDetail;
+use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -66,39 +67,34 @@ class ProjectDetailController extends Controller
         return view('pages.projectsdetails.edit', compact('project', 'projectDetail'));
     }
 
-    public function update(Request $request, $projectId, $projectDetailId)
-{
-    $validatedData = $request->validate([
-        'client' => 'required|string',
-        'size' => 'required|string',
-        'price' => 'required|numeric',
-        'location' => 'required|string',
-        'architect' => 'nullable|string',
-        'link' => 'nullable|url',
-        'instructor_image' => 'nullable|image|max:2048', // Validation for the image file
-    ]);
-
-    // Find the specific project detail
-    $projectDetail = ProjectDetail::findOrFail($projectDetailId);
-
-    // Check if a new image file was uploaded
-    if ($request->hasFile('instructor_image')) {
-        // Delete the old image from storage if it exists
-        if ($projectDetail->instructor_image && Storage::disk('public')->exists($projectDetail->instructor_image)) {
-            Storage::disk('public')->delete($projectDetail->instructor_image);
+    public function update(Request $request, $projectId, $detailId)
+    {
+        $projectDetail = ProjectDetail::findOrFail($detailId);
+    
+        // Update basic details
+        $projectDetail->update($request->only('client', 'size', 'price', 'location', 'architect', 'link'));
+    
+        // Handle instructor image (if provided)
+        if ($request->hasFile('instructor_image')) {
+            $imagePath = $request->file('instructor_image')->store('project-details', 'public');
+            $projectDetail->update(['instructor_image' => $imagePath]);
         }
-
-        // Store the new image and update the path in the database
-        $path = $request->file('instructor_image')->store('project-details', 'public');
-        $validatedData['instructor_image'] = $path;
+    
+        // Handle multiple images
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('project-details', 'public');
+                Image::create([
+                    'project_detail_id' => $projectDetail->id,
+                    'image_path' => $path,
+                ]);
+            }
+        }
+        
+        return redirect()->route('projectsdetails.show', [$projectId, $detailId])->with('success', 'Project details updated successfully.');
     }
+    
 
-    // Update the project detail with new data
-    $projectDetail->update($validatedData);
-
-    return redirect()->route('projectsdetails.show', $projectId)
-        ->with('success', 'Project details updated successfully.');
-}
 
 
     // Delete project detail
@@ -113,6 +109,6 @@ class ProjectDetailController extends Controller
 
         $projectDetail->delete();
 
-        return redirect()->route('projects.show', $projectId)->with('success', 'Project detail deleted successfully.');
+        return redirect()->route('projects.index', $projectId)->with('success', 'Project detail deleted successfully.');
     }
 }

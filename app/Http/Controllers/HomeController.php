@@ -39,7 +39,7 @@ class HomeController extends Controller
         'title.*' => 'nullable|string|max:255',
         'description.*' => 'nullable|string',
         'temperature_range.*' => 'nullable|string',
-        'image_path.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'image_path.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:2048',
     ]);
 
     // Loop through each set of inputs
