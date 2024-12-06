@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('content')
+@section('about')
 <div class="container py-5">
     <h1 class="text-center mb-4">About Us</h1>
     <p class="text-center text-muted">Discover more about what we offer</p>

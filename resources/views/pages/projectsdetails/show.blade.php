@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('content')
+@section('projects')
 <div class="container py-5">
     <h1 class="mb-4 text-center">Project Details: {{ $project->title }}</h1>
 
@@ -9,12 +9,12 @@
         <div class="col-lg-8 mb-4">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">Project Information</h5>
+                    <h5 class="card-title fw-bold">Project Information</h5>
 
                     @if ($projectDetail)
-                        <ul class="list-unstyled">
+                        <ul class="list-unstyled pt-2">
                             <li><strong>Client:</strong> {{ $projectDetail->client }}</li>
-                            <li><strong>Size:</strong> {{ $projectDetail->size }}</li>
+                            <li><strong>Size:</strong> {{ $projectDetail->size }}m</li>
                             <li><strong>Price:</strong> ${{ number_format($projectDetail->price, 2) }}</li>
                             <li><strong>Location:</strong> {{ $projectDetail->location }}</li>
                             <li><strong>Architect:</strong> {{ $projectDetail->architect }}</li>
@@ -66,7 +66,7 @@
                          style="height: 350px; object-fit: cover; width: 100%;">
                 @endif
                 <div class="card-body">
-                    <p class="text-muted text-center">Instructor/Project Image</p>
+                    <p class="text-muted text-center">Project Detail</p>
                 </div>
             </div>
 

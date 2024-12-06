@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('content')
+@section('about')
 <div class="container text-center my-5">
     <h1>Create Multiple About Items</h1>
 

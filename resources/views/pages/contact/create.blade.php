@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('content')
+@section('contact')
 <div class="container my-5">
     <h2>Create Multiple Home Items</h2>
 

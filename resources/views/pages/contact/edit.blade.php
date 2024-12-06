@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('content')
+@section('contact')
 <div class="container my-5">
     <h1>Edit Contact</h1>
     <form action="{{ route('contact.update', $contactItem->id) }}" method="POST" enctype="multipart/form-data">

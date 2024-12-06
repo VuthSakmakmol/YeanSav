@@ -1,7 +1,8 @@
+
 @extends('layouts.app')
 
-@section('content')
-<div class="container py-5">
+@section('projects')
+<div class="container py-5 project-section">
     <h1 class="text-center mb-4">Our Projects</h1>
     <p class="text-center text-muted">Explore our latest projects and designs</p>
 

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('content')
+@section('home')
 <div class="container my-5">
     <h1>Edit Home Item</h1>
     <form action="{{ route('home.update', $homeItem->id) }}" method="POST" enctype="multipart/form-data">

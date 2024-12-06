@@ -62,8 +62,14 @@
     
     <!-- Main Content -->
     <div class="container mt-4">
-        @yield('content')
+        @yield('home')
+        @yield('projects')
+        @yield('contact')
+        @yield('about')
+        
+      
     </div>
+    @include('layouts.footer') <!-- Include the footer here -->
 
     <!-- Bootstrap Bundle JS (including Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

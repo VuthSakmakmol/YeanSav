@@ -14,6 +14,7 @@ Route::get('/project', [ProjectController::class, 'index'])->name('project');
 Route::get('/projectdetails/{projectDetail}', [ProjectDetailController::class, 'show'])->name('projectsdetails.show');Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 
+
 // Authentication routes (default Laravel Breeze or similar setup)
 require __DIR__ . '/auth.php';
 

@@ -1,8 +1,8 @@
 @extends('layouts.app')
+@section('contact')
 
-@section('content')
-<div class="container py-5">
-    <h1 class="text-center mb-4">Contact Us</h1>
+<div  class="container py-5 ">
+    <h1 class="text-center mb-4">Our Team</h1>
     <p class="text-center text-muted">Discover more about what we offer</p>
 
     <div class="row justify-content-center mt-4">
@@ -14,9 +14,9 @@
                         <img src="{{ asset('storage/' . $contactitem->image_path) }}" 
                              alt="{{ $contactitem->title }}" 
                              class="card-img-top" 
-                             style="height: 200px; object-fit: cover;">
+                             style="height: 350px; object-fit: cover;">
                     @else
-                        <img src="https://via.placeholder.com/200x150" 
+                        <img src="https://via.placeholder.com/200x360" 
                              alt="No Image Available" 
                              class="card-img-top" 
                              style="height: 200px; object-fit: cover;">
@@ -24,10 +24,9 @@
 
                     {{-- Card Body --}}
                     <div class="card-body text-center">
-                        <h5 class="card-title">{{ $contactitem->title }}</h5>
+                        <h5 class="card-title fw-bold fs-3">{{ $contactitem->title }}</h5>
                         <p class="card-text text-muted">{{ $contactitem->temperature_range }}</p>
                         <p class="card-text">{{ $contactitem->description }}</p>
-                        <a href="#" class="btn btn-outline-primary btn-sm">Learn more...</a>
                     </div>
 
                     {{-- Admin Controls --}}

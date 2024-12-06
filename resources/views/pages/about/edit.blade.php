@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('content')
+@section('about')
 <div class="container text-center my-5">
     <h1 class="mb-4">Edit About Item</h1>
 

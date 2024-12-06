@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('content')
+@section('projects')
     <div class="container my-5">
         <h1 class="mb-4">Edit Details for {{ $project->title }}</h1>
 
